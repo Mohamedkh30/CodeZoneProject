@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Items\Commands\Delete\1bcch5fa.c5z~" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Stores\Commands\" />
+    <Folder Include="Stores\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.25" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.25" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeZoneProject.Domain\CodeZoneProject.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
