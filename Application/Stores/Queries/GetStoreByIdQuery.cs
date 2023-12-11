@@ -1,32 +1,31 @@
 ﻿using CodeZoneProject.Application.Interfaces;
-using CodeZoneProject.Application.Items.Models;
+using CodeZoneProject.Application.Stores.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace CodeZoneProject.Application.Items.Queries
+namespace CodeZoneProject.Application.Stores.Queries
 {
-    public class GetItemByIdQuery : IRequest<ItemDto>
+    public class GetStoreByIdQuery : IRequest<StoreDto>
     {
         public Guid Id { get; set; }
-        public class Handler : IRequestHandler<GetItemByIdQuery, ItemDto>
+        public class Handler : IRequestHandler<GetStoreByIdQuery, StoreDto>
         {
             private readonly IContext _context;
             public Handler(IContext context)
             {
                 _context = context;
             }
-            public async Task<ItemDto> Handle(GetItemByIdQuery request, CancellationToken cancellationToken)
+            public async Task<StoreDto> Handle(GetStoreByIdQuery request, CancellationToken cancellationToken)
             {
                 try
                 {
-                    return await _context.Items.Where(i => i.Id== request.Id && !i.Deleted)
-                    .Select(i => new ItemDto
+                    return await _context.Stores.Where(i => i.Id == request.Id && !i.Deleted)
+                    .Select(s => new StoreDto
                     {
-                        Id = i.Id,
-                        Name = i.Name,
-                        Category = i.Category,
-                        CategoryName = i.Category.ToString()
+                        Id = s.Id,
+                        Name = s.Name,
+                        Address = s.Address,
                     })
                     .FirstOrDefaultAsync(cancellationToken);
                 }

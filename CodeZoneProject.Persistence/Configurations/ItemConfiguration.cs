@@ -19,7 +19,6 @@ namespace CodeZoneProject.Infrastructure.Configurations
             builder.Property(x => x.Name).HasMaxLength(120).IsRequired();
             builder.Property(x => x.Category).HasConversion<int>().IsRequired();
 
-            builder.Property(i => i.Deleted).HasDefaultValue(false);
             builder.Property(b => b.CreationDate).HasColumnType("DATETIME").HasDefaultValueSql("CURRENT_TIMESTAMP()").IsRequired();
             builder.Property(b => b.ModificationDate).HasColumnType("DATETIME").HasDefaultValueSql("CURRENT_TIMESTAMP()");
         }

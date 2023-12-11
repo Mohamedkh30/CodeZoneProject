@@ -20,7 +20,6 @@ namespace CodeZoneDemoProject
             builder.Services.AddControllersWithViews();
 
             var connectionString = builder.Configuration.GetConnectionString("CodeZoneProjectDB_ConStr");
-            //builder.Services.AddDbContext<Context>(options => options.UseSqlServer(connectionString));
             builder.Services.AddDbContext<IContext, Context>(options =>
                 options.UseSqlServer(connectionString)
             );

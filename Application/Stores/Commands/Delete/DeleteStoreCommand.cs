@@ -1,31 +1,37 @@
 ﻿using CodeZoneProject.Application.Interfaces;
+using CodeZoneProject.Application.Items.Commands.Delete;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CodeZoneProject.Application.Items.Commands.Delete
+namespace CodeZoneProject.Application.Stores.Commands.Delete
 {
-    public class DeleteItemCommand : IRequest<bool>
+    public class DeleteStoreCommand : IRequest<bool>
     {
         public Guid Id { get; set; }
-        public class Handler : IRequestHandler<DeleteItemCommand, bool>
+        public class Handler : IRequestHandler<DeleteStoreCommand, bool>
         {
             private readonly IContext _context;
             public Handler(IContext context)
             {
                 _context = context;
             }
-            public async Task<bool> Handle(DeleteItemCommand request, CancellationToken cancellationToken)
+            public async Task<bool> Handle(DeleteStoreCommand request, CancellationToken cancellationToken)
             {
                 try
                 {
-                    
-                    var item = await _context.Items.FirstOrDefaultAsync(i => i.Name=="test", cancellationToken);
 
-                    if (item != null)
+                    var store = await _context.Stores.FirstOrDefaultAsync(i => i.Name == "test", cancellationToken);
+
+                    if (store != null)
                     {
-                        item.Deleted = true;
-                        item.ModificationDate = DateTime.Now;
+                        store.Deleted = true;
+                        store.ModificationDate = DateTime.Now;
 
                         await _context.SaveChangesAsync(cancellationToken);
                         return true;

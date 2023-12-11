@@ -1,44 +1,32 @@
-﻿using CodeZoneProject.Application.Items.Queries;
-using CodeZoneProject.Domain.Enums;
+﻿using CodeZoneProject.Application.Stores.Commands.Create;
+using CodeZoneProject.Application.Stores.Commands.Delete;
+using CodeZoneProject.Application.Stores.Commands.Update;
+using CodeZoneProject.Application.Stores.Queries;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 
 namespace CodeZoneProject.Web.Controllers
 {
-    public class StoresController : Controller
+    public class StoresController : BaseController
     {
-        private IMediator _mediator;
-        protected IMediator Mediator => _mediator ?? (_mediator = HttpContext.RequestServices.GetService<IMediator>());
-
-        // GET: StoresController
         public async Task<ActionResult> Index()
         {
-            await Mediator.Send(new GetAllItemsQuery());
+            ViewBag.Stores = await Mediator.Send(new GetAllStoresQuery());
             return View();
         }
 
-        // GET: StoresController/Create
         public ActionResult Create()
         {
-            var catergories = Enum.GetValues(typeof(ItemCategory)).Cast<ItemCategory>().Select(v => new SelectListItem
-            {
-                Text = v.ToString(),
-                Value = ((int)v).ToString()
-            }).ToList();
-            ViewBag.Categories = new SelectList(catergories, "Value", "Text");
             return View();
         }
 
-        // POST: StoresController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(CreateStoreCommand command)
         {
             try
             {
+                await Mediator.Send(command);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -47,46 +35,39 @@ namespace CodeZoneProject.Web.Controllers
             }
         }
 
-        // GET: StoresController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(Guid id)
         {
-            return View();
+            var store = await Mediator.Send(new GetStoreByIdQuery() { Id = id });
+            if (store != null)
+                return View(new UpdateStoreCommand()
+                {
+                    Id = store.Id,
+                    Name = store.Name,
+                    Address = store.Address
+                });
+
+            return RedirectToAction(nameof(Index));
         }
 
-        // POST: StoresController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(UpdateStoreCommand command)
         {
             try
             {
+                await Execute(command, "Update Store Command");
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return View(command);
             }
         }
 
-        // GET: StoresController/Delete/5
-        public ActionResult Delete(int id)
+        [HttpGet]
+        public async Task<ActionResult> Delete(Guid id)
         {
-            return View();
-        }
-
-        // POST: StoresController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await Mediator.Send(new DeleteStoreCommand() { Id = id });
+            return RedirectToAction(nameof(Index));
         }
     }
 }

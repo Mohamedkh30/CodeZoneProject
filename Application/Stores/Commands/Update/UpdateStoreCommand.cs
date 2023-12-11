@@ -3,29 +3,31 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace CodeZoneProject.Application.Items.Commands.Delete
+namespace CodeZoneProject.Application.Stores.Commands.Update
 {
-    public class DeleteItemCommand : IRequest<bool>
+    public class UpdateStoreCommand : IRequest<bool>
     {
         public Guid Id { get; set; }
-        public class Handler : IRequestHandler<DeleteItemCommand, bool>
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public class Handler : IRequestHandler<UpdateStoreCommand, bool>
         {
             private readonly IContext _context;
             public Handler(IContext context)
             {
                 _context = context;
             }
-            public async Task<bool> Handle(DeleteItemCommand request, CancellationToken cancellationToken)
+            public async Task<bool> Handle(UpdateStoreCommand request, CancellationToken cancellationToken)
             {
                 try
                 {
-                    
-                    var item = await _context.Items.FirstOrDefaultAsync(i => i.Name=="test", cancellationToken);
+                    var store = await _context.Stores.FirstOrDefaultAsync(s => s.Id == request.Id);
 
-                    if (item != null)
+                    if (store != null)
                     {
-                        item.Deleted = true;
-                        item.ModificationDate = DateTime.Now;
+                        store.Name = request.Name;
+                        store.Address = request.Address;
+                        store.ModificationDate = DateTime.Now;
 
                         await _context.SaveChangesAsync(cancellationToken);
                         return true;

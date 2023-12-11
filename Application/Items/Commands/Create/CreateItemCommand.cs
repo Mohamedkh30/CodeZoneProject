@@ -14,7 +14,6 @@ namespace CodeZoneProject.Application.Items.Commands.Create
         public class Handler : IRequestHandler<CreateItemCommand, Guid>
         {
             private readonly IContext _context;
-            private readonly ILogger _logger;
             public Handler(IContext context)
             {
                 _context = context;
@@ -36,7 +35,7 @@ namespace CodeZoneProject.Application.Items.Commands.Create
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "An unexpected error occurred In CreateItemCommand");
+                    //error handling
                     throw;
                 }
             }

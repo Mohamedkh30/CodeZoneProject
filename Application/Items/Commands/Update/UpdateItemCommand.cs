@@ -21,7 +21,6 @@ namespace CodeZoneProject.Application.Items.Commands.Update
         public class Handler : IRequestHandler<UpdateItemCommand, bool>
         {
             private readonly IContext _context;
-            private readonly ILogger _logger;
             public Handler(IContext context)
             {
                 _context = context;
@@ -30,7 +29,7 @@ namespace CodeZoneProject.Application.Items.Commands.Update
             {
                 try
                 {
-                    var item = await _context.Items.FirstOrDefaultAsync(i => request.Id== request.Id, cancellationToken);
+                    var item = await _context.Items.FirstOrDefaultAsync(i => i.Id== request.Id, cancellationToken);
                     
                     if(item!=null)
                     {
@@ -45,7 +44,7 @@ namespace CodeZoneProject.Application.Items.Commands.Update
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "An unexpected error occurred In UpdateItemCommand");
+                    //error handling
                     throw;
                 }
             }

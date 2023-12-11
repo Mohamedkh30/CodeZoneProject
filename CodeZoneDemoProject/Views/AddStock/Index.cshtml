@@ -1,0 +1,63 @@
+﻿@{
+    var title = "Add Stock";
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-body">
+            <section id="file-export">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="heading-elements">
+                                    <h3 class="content-header-title">@title</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <label class="control-label">Store</label>
+                                        <select id="StoreId" asp-items="ViewBag.Store" type="text" class="form-control"></select>
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label class="control-label">Item</label>
+                                        <select onchange="getCurrentStock(this)" id ="ItemId" asp-items="ViewBag.Items" type="text" class="form-control"></select>
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label class="control-label">Quantity</label>
+                                        <input id ="Quantity" type="text" class="form-control"></input>
+                                    </div>
+                                    <div class="form-group col-6">
+                                    <label class="control-label">Store Quantity</label>
+                                        <input readonly id ="StoreQuantity" type="text" class="form-control"></input>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script>
+            let getCurrentStock = function(obj){
+                let Id = $(obj).val()
+                console.log($(obj).val())
+
+                $.ajax({
+                    url: "/AddStock/getStoreQuantity?ItemId=" + Id,
+                    dataType: 'json',
+                    type: 'Get',
+                    success: function (data) {
+                        $("#StoreQuantity").val(data)
+                    }
+                });
+            }
+        </script>
+    }
+}

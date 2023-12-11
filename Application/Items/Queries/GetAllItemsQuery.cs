@@ -11,7 +11,6 @@ namespace CodeZoneProject.Application.Items.Queries
         public class Handler : IRequestHandler<GetAllItemsQuery, List<ItemDto>>
         {
             private readonly IContext _context;
-            private readonly ILogger _logger;
             public Handler(IContext context)
             {
                 _context = context;
@@ -33,7 +32,7 @@ namespace CodeZoneProject.Application.Items.Queries
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "An unexpected error occurred In GetAllItemsQuery");
+                    //error handling
                     throw;
                 }
             }

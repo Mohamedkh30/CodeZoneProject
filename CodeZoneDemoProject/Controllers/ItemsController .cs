@@ -4,19 +4,13 @@ using CodeZoneProject.Application.Items.Commands.Update;
 using CodeZoneProject.Application.Items.Queries;
 using CodeZoneProject.Domain.Enums;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace CodeZoneProject.Web.Controllers
 {
-    public class ItemsController : Controller
+    public class ItemsController : BaseController
     {
-        private IMediator _mediator;
-        protected IMediator Mediator => _mediator ?? (_mediator = HttpContext.RequestServices.GetService<IMediator>());
-
         public async Task<ActionResult> Index()
         {
             ViewBag.Items = await Mediator.Send(new GetAllItemsQuery());
@@ -48,12 +42,15 @@ namespace CodeZoneProject.Web.Controllers
         {
             ViewBag.Categories = getCategorySelectList();
             var item = await Mediator.Send(new GetItemByIdQuery() { Id = id });
-            return View(new UpdateItemCommand() 
-            { 
-                Id= item.Id,
-                Name = item.Name,
-                Category = item.Category
-            });
+            if(item !=null)
+                return View(new UpdateItemCommand()
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Category = item.Category
+                });
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -61,19 +58,20 @@ namespace CodeZoneProject.Web.Controllers
         {
             try
             {
-                await Mediator.Send(command);
+                await Execute(command, "Update Item Command");
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                ViewBag.Categories = getCategorySelectList();
+                return View(command);
             }
         }
 
         [HttpGet]
         public async Task<ActionResult> Delete(Guid id)
         {
-            await Mediator.Send(new DeleteItemCommand() { Id = id});
+            await Mediator.Send(new DeleteItemCommand() { Id = id });
             return RedirectToAction(nameof(Index));
         }
 
