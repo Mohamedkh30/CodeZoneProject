@@ -20,7 +20,7 @@ namespace CodeZoneProject.Application.Items.Commands.Delete
                 try
                 {
                     
-                    var item = await _context.Items.FirstOrDefaultAsync(i => i.Name=="test", cancellationToken);
+                    var item = await _context.Items.FirstOrDefaultAsync(i => i.Id== request.Id, cancellationToken);
 
                     if (item != null)
                     {

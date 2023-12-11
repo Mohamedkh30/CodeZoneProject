@@ -57,10 +57,12 @@
                     type: "Get",
                     success: function (response) {
                         alert('Deleted Successfully');
+                        location.reload();
                     },
                     error: function (err) {
                         console.log(err)
-                        alert("Can't delete");
+                        alert("error in deleting");
+                        location.reload();
                     }
                 });
             }

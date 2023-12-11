@@ -29,8 +29,10 @@ namespace CodeZoneProject.Web.Controllers
         {
             try
             {
-                await Mediator.Send(command);
-                return RedirectToAction(nameof(Index));
+                var result = await ValidateAndProcessCommand<CreateItemCommand, CreateItemCommandValidator>(command);
+                if (result is ViewResult)
+                    ViewBag.Categories = getCategorySelectList();
+                return result;
             }
             catch
             {
@@ -58,8 +60,10 @@ namespace CodeZoneProject.Web.Controllers
         {
             try
             {
-                await Execute(command, "Update Item Command");
-                return RedirectToAction(nameof(Index));
+                var result = await ValidateAndProcessCommand<UpdateItemCommand, UpdateItemCommandValidator>(command);
+                if (result is ViewResult)
+                    ViewBag.Categories = getCategorySelectList();
+                return result;
             }
             catch
             {
@@ -71,8 +75,11 @@ namespace CodeZoneProject.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(Guid id)
         {
-            await Mediator.Send(new DeleteItemCommand() { Id = id });
-            return RedirectToAction(nameof(Index));
+            var result = await Mediator.Send(new DeleteItemCommand() { Id = id });
+            if(result)
+                return Ok();
+            else
+                return BadRequest();
         }
 
         #region Helper Methods

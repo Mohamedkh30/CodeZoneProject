@@ -1,5 +1,8 @@
 ﻿using CodeZoneProject.Application.Items.Queries;
+using CodeZoneProject.Application.StoreItems.Commands;
+using CodeZoneProject.Application.StoreItems.Queries;
 using CodeZoneProject.Application.Stores.Queries;
+using CodeZoneProject.Domain.Entities;
 using CodeZoneProject.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,16 +20,15 @@ namespace CodeZoneProject.Web.Controllers
             return View();
         }
 
-        #region Helper Methods
-        private static SelectList getCategorySelectList()
+        #region APIs
+        public async Task<IActionResult> GetStoreItemQuantity(Guid storeId, Guid itemId)
         {
-            var catergories = Enum.GetValues(typeof(ItemCategory)).Cast<ItemCategory>().Select(v => new SelectListItem
-            {
-                Text = v.ToString(),
-                Value = ((int)v).ToString()
-            }).ToList();
-
-            return new SelectList(catergories, "Value", "Text");
+            return await Execute(new GetStoreItemQuantityQuery() { ItemId = itemId , StoreId = storeId }, "GetStoreItemQuantityQuery");
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateStoreItemQuantity([FromBody]UpdateStoreItemQuantityCommand command)
+        {
+            return await Execute(command, "GetStoreItemQuantityQuery");
         }
         #endregion
     }

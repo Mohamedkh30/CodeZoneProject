@@ -16,21 +16,34 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="form-group col-6">
+                                    <div class="form-group col-md-5">
                                         <label class="control-label">Store</label>
-                                        <select id="StoreId" asp-items="ViewBag.Store" type="text" class="form-control"></select>
+                                        <select onchange="getCurrentQuantity()" id="StoreId" asp-items="ViewBag.Stores" type="text" class="form-control">
+                                            <option value="" disabled selected>select store</option>
+                                        </select>
                                     </div>
-                                    <div class="form-group col-6">
+                                    <div class="form-group col-md-5">
+                                        <label class="control-label text-danger" id="validationError"></label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-5">
                                         <label class="control-label">Item</label>
-                                        <select onchange="getCurrentStock(this)" id ="ItemId" asp-items="ViewBag.Items" type="text" class="form-control"></select>
+                                        <select onchange="getCurrentQuantity()" id="ItemId" asp-items="ViewBag.Items" type="text" class="form-control">
+                                            <option value="" disabled selected>select item</option>
+                                        </select>
                                     </div>
-                                    <div class="form-group col-6">
+                                    <div class="form-group col-md-3">
                                         <label class="control-label">Quantity</label>
-                                        <input id ="Quantity" type="text" class="form-control"></input>
+                                        <input type="number" id="Quantity" class="form-control">
                                     </div>
-                                    <div class="form-group col-6">
-                                    <label class="control-label">Store Quantity</label>
-                                        <input readonly id ="StoreQuantity" type="text" class="form-control"></input>
+                                    <div class="form-group col-md-3">
+                                        <label class="control-label">Store Quantity</label>
+                                        <input readonly id="StoreQuantity" type="text" class="form-control">
+                                    </div>
+                                    <div class="form-group col-md-1">
+                                        <label class="control-label"></label>
+                                        <button class="btn btn-primary form-control" onclick="modifiyStock()">modifiy</button>
                                     </div>
                                 </div>
                             </div>
@@ -43,20 +56,52 @@
 </div>
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
         <script>
-            let getCurrentStock = function(obj){
-                let Id = $(obj).val()
-                console.log($(obj).val())
-
+            let getCurrentQuantity = function () {
+                let itemId = $("#ItemId").val();
+                let storeId = $("#StoreId").val();
+                
                 $.ajax({
-                    url: "/AddStock/getStoreQuantity?ItemId=" + Id,
+                    url: `/AddStock/GetStoreItemQuantity?ItemId=${itemId}&storeId=${storeId}`,
                     dataType: 'json',
-                    type: 'Get',
-                    success: function (data) {
-                        $("#StoreQuantity").val(data)
+                    type: 'GET',
+                    success: function (response) {
+                        $("#StoreQuantity").val(response.data)
                     }
                 });
+                
+            }
+
+            let modifiyStock = function(){
+
+
+                if ($("#StoreId").val() === null) {
+                    $("#validationError").text("Select Store")
+                } else if ($("#ItemId").val() === null) {
+                    $("#validationError").text("Select Item")
+                } else if ($("#Quantity").val() === "") {
+                    $("#validationError").text("Enter Quantity")
+                }else{
+                    $("#validationError").text("")
+
+                    let command ={
+                        itemId : $("#ItemId").val(),
+                        storeId : $("#StoreId").val(),
+                        quantity : $("#Quantity").val()
+                    }
+
+                    $.ajax({
+                        url: `/AddStock/UpdateStoreItemQuantity`,
+                        dataType: 'json',
+                        type: 'POST',
+                        contentType: "application/json",
+                        data: JSON.stringify(command),
+                        success: function (response) {
+                            getCurrentQuantity()
+                        }
+                    });
+                }
+                
             }
         </script>
     }

@@ -9,7 +9,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace CodeZoneProject.Web.Controllers
 {
-    public class BaseController : Controller 
+    public class BaseController : Controller
     {
         private IMediator _mediator;
         protected IMediator Mediator => _mediator ?? (_mediator = HttpContext.RequestServices.GetService<IMediator>());
@@ -21,27 +21,29 @@ namespace CodeZoneProject.Web.Controllers
                 return Ok(new JsonResponse<TRequest> { Data = response, Message = Msg, StatusCode = (int)HttpStatusCode.OK, Success = true });
             }
 
-            catch (Exception ex) 
+            catch (Exception ex)
             { return BadRequest(new JsonResponse<int> { Data = 0, Message = ex.Message, StatusCode = (int)HttpStatusCode.BadRequest }); }
         }
 
-        //public void ValidateCommand<TRequest, TValidator>(TRequest request) where TValidator : AbstractValidator<TRequest>
-        //{
-        //    var validator = new TValidator();
-        //    var res = validator.Validate(request);
-        //    if (res.IsValid)
-        //    {
-        //        await Mediator.Send(command);
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    else
-        //    {
-        //        foreach (ValidationFailure failer in res.Errors)
-        //        {
-        //            ModelState.AddModelError(failer.PropertyName, failer.ErrorMessage);
-        //        }
-        //        return View(command);
-        //    }
-        //}
+        public async Task<ActionResult> ValidateAndProcessCommand<TCommand, TValidator>(TCommand command)
+            where TValidator : AbstractValidator<TCommand>, new()
+        {
+            var validator = new TValidator();
+            var validationResult = await validator.ValidateAsync(command);
+
+            if (validationResult.IsValid)
+            {
+                await Mediator.Send(command);
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                foreach (var error in validationResult.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+                return View(command);
+            }
+        }
     }
 }

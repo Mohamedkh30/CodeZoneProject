@@ -1,4 +1,6 @@
-﻿using CodeZoneProject.Application.Stores.Commands.Create;
+﻿using CodeZoneProject.Application.Items.Commands.Create;
+using CodeZoneProject.Application.Items.Commands.Delete;
+using CodeZoneProject.Application.Stores.Commands.Create;
 using CodeZoneProject.Application.Stores.Commands.Delete;
 using CodeZoneProject.Application.Stores.Commands.Update;
 using CodeZoneProject.Application.Stores.Queries;
@@ -26,8 +28,7 @@ namespace CodeZoneProject.Web.Controllers
         {
             try
             {
-                await Mediator.Send(command);
-                return RedirectToAction(nameof(Index));
+                return await ValidateAndProcessCommand<CreateStoreCommand, CreateStoreCommandValidator>(command);
             }
             catch
             {
@@ -54,8 +55,7 @@ namespace CodeZoneProject.Web.Controllers
         {
             try
             {
-                await Execute(command, "Update Store Command");
-                return RedirectToAction(nameof(Index));
+                return await ValidateAndProcessCommand<UpdateStoreCommand, UpdateStoreCommandValidator>(command);
             }
             catch
             {
@@ -66,8 +66,11 @@ namespace CodeZoneProject.Web.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(Guid id)
         {
-            await Mediator.Send(new DeleteStoreCommand() { Id = id });
-            return RedirectToAction(nameof(Index));
+            var result = await Mediator.Send(new DeleteStoreCommand() { Id = id });
+            if (result)
+                return Ok();
+            else
+                return BadRequest();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace CodeZoneProject.Application.Stores.Commands.Delete
                 try
                 {
 
-                    var store = await _context.Stores.FirstOrDefaultAsync(i => i.Name == "test", cancellationToken);
+                    var store = await _context.Stores.FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken);
 
                     if (store != null)
                     {

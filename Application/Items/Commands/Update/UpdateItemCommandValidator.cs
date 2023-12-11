@@ -3,10 +3,9 @@ using FluentValidation;
 
 namespace CodeZoneProject.Application.Items.Commands.Create
 {
-    public class UpdatetemCommandValidator : AbstractValidator<UpdateItemCommand>
+    public class UpdateItemCommandValidator : AbstractValidator<UpdateItemCommand>
     {
-
-        public UpdatetemCommandValidator()
+        public UpdateItemCommandValidator()
         {
             RuleFor(a => a.Id).NotEmpty();
 
