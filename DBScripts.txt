@@ -1,0 +1,41 @@
+CREATE TABLE [dbo].[Items](
+	[Id] [uniqueidentifier] NOT NULL primary key,
+	[Name] [varchar](120) NOT NULL,
+	[Category] [int] NOT NULL,
+	[CreationDate] [datetime] NOT NULL,
+	[ModificationDate] [datetime] NULL,
+	[Deleted] [bit] NOT NULL)
+
+CREATE TABLE [dbo].[Stores](
+	[Id] [uniqueidentifier] NOT NULL PRIMARY KEY,
+	[Name] [varchar](120) NOT NULL,
+	[Address] [varchar](1000) NOT NULL,
+	[CreationDate] [datetime] NOT NULL,
+	[ModificationDate] [datetime] NULL,
+	[Deleted] [bit] NOT NULL)
+
+CREATE TABLE [dbo].[StoreItems](
+	[StoreId] [uniqueidentifier] NOT NULL,
+	[ItemId] [uniqueidentifier] NOT NULL,
+	[quantity] [decimal](8, 0) NOT NULL,
+ CONSTRAINT [PK_StoreItems] PRIMARY KEY CLUSTERED 
+(
+	[StoreId] ASC,
+	[ItemId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[StoreItems]  WITH CHECK ADD  CONSTRAINT [FK_StoreItems_Items] FOREIGN KEY([ItemId])
+REFERENCES [dbo].[Items] ([Id])
+GO
+
+ALTER TABLE [dbo].[StoreItems] CHECK CONSTRAINT [FK_StoreItems_Items]
+GO
+
+ALTER TABLE [dbo].[StoreItems]  WITH CHECK ADD  CONSTRAINT [FK_StoreItems_Stores] FOREIGN KEY([StoreId])
+REFERENCES [dbo].[Stores] ([Id])
+GO
+
+ALTER TABLE [dbo].[StoreItems] CHECK CONSTRAINT [FK_StoreItems_Stores]
+GO
