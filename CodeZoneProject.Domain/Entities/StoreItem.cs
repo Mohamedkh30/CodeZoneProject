@@ -9,7 +9,6 @@ namespace CodeZoneProject.Domain.Entities
     public class StoreItem
     {
         public decimal Quantity { get; set; }
-        public DateTime EntryDate { get; set; }
         public Guid StoreId { get; set; }
         public Guid ItemId { get; set; }
         public Store Store { get; set; }
